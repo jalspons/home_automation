@@ -5,77 +5,81 @@ Home automation system
 ## 1. Introduction
 
 * Automation system for the cottage
-* No former Internet connection
-* Initial idea was to develop a cost-effective method for controlling the present heating system
+* No Internet connection
+* Idea is to develop a cost-effective method for controlling the heating system
 
-![Image](concept.jpg)
 
 ## 2. Concept
-### Server
-* Manages all of the communication in the system
 
-### User interface
-* Operates as an user interface
+The project consists of three separate parts:
+* A cloud server with an user interface
+* A local server on the node (e.g. a raspberry pi)
+* An outlet manager to control the heateners
 
-### Control devices
-* Control and measure the situation of the system
+### Gear
+* A raspberry pi
+* Remote controlled outlets
+* WiFi connection (e.g. 4G Hotspot)
 
-### Open data
-* Collect additional information, such as weather forecasts
+## 3. Cloud Server 
 
-## 3. Server (Back-End) 
-### 3.1 UI Services
+`The cloud server gathers the data and brings the system open for the users.`  
+
+### UI
 * Authentication
-* Transform obtained temperature and weather data into a comprehensive form
-* Inventory management (gas, food, etc.)
+* Dashboard with controls for each outlet
 
-### 3.2 Control device services
-* Control devices: Receive situation update in 15 minutes intervals and send back the control parameters.
-* (Optional: Automate temperature management)
+### Communication
 
-### 3.3 Open data 
-* Fetch history weather data and store it into the database
-* Fetch forecast weather data and store it into the database
+Local Server <--- Websocket ---> Cloud server <--- HTTPS (Django app) ---> User
 
-### 3.2 Tech
-* Node.js
+### Libraries
+* Python3
+* Python3 websockets
+* Django 2
 
-## 4. User interface (Front-End)
-### 4.1. Services
+## 4. Local Server
+
+`The local server act as the message passing interface. The interface is located at the local node in order to minimize computation performed at the cloud and to allow gathering data into a bigger chunks. `
+
+### Services
 * Server: Deliver user input
 * Visualize 
 * Inventory follow-up
 * Temperature level settings
 * Weather info
 
-### 4.2 Tech
-* React
+### Tech
 
-## 5. Control devices
-`ESP8266 serves as the communicator in the control devices end. Each 
-actions are initialized by it.`
+* Python3 
+* Python3 Asyncio
+* Python websockets
 
-### 5.1. Services
+## 5. Outlet Manager
+`Outlet manager is a program running on a local node. It has the access for controlling the outlets. The Outlet Manager is independent from the local server to increase the reliability. When the server crashes, the outlets are still under control and turned off eventually.`
+
+### Services
+* On / Off switches for outlets
+* Timers for activating outlets
+
+### Tech
+* Python3
+* RPi.GPIO library
+
+# The future
+
+## 6. Data Collectors
+### Services
 * Server: POST-messages in every 15 minutes and receive control parameters
 * Sensors: Adjust according to control parameters
-* 3G modem: Use for WiFi connection
 
-### 5.2. Components
-* Microchip controller: NodeMCU microchip (ESP8266)
-* WiFi electric plugs w/ remote controller (more safe to manage low voltages)
-* 3G hotspot (Android)
-* Humidity & Temperature: DHT22 sensor
+### Components
+* Microcontrollers for data collection
+* 4G hotspot
+* Humidity & Temperature:  DHT22 sensor
 * Cameras?
 * 5V Relays
 * LEDs
 
-## 6. Open data
-### 6.1. Services
-* Use as a data resources
-
-### 6.2 Finnish Meteorological Institute
-* Get the information about the weather circumstances
-* If the system hasa advanced enough, use data to adjust control parameters 
-
-### 6.3 Lake temperatures in Finland
-* Just for better user exprience gather information about the water temperatures
+## 7. Open data
+* Data resources to support the system, e.g. local weather data
