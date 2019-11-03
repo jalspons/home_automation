@@ -1,0 +1,126 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        {% for outlet in outlets %}
+        <div class="col">
+            <h1 class="outlet_status_title">{{ outlet.id }}</h1> 
+            <h2 id="outlet-status-{{ outlet.id }}" text-color="red">Inactive</h2>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+    <script type="text/javascript">
+        {% for activation in activations %}
+        if ('{{ activation.is_active }}' === 'True') {
+            {% for outlet in activation.outlet.all %}
+                const s = document.querySelector('#outlet-status-{{ outlet.id }}');
+                s.style.color = 'green';
+                s.textContent = 'Active';
+            {% endfor %}
+        }
+        {% endfor %}
+    </script>        
+
+<div class="container">
+    <div class="row">
+      <div class="col">            
+          <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Owner</th>
+                    <th>Outlet</th>
+                    <th>Activation Time</th>
+                    <th>Deactivation Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activation in activations %}  
+                <tr>
+                    <td>{{ activation.owner }}</td>
+                    <td>
+                        {% for outlet in activation.outlet.all %}
+                        {{ outlet.id }} {% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ activation.activation_time }}</td>
+                    <td>{{ activation.deactivation_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block content1 %}
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+    {% for outlet in object_list %}
+    {{ outlet.activation }}
+    {% endfor %}
+   
+    {% for outlet, activations in data.items %}
+          <div class="col">
+          <h1 class="text-center">{{ outlet.outlet_number }}</h1>
+          <h2 class="
+          {% for activation in activations %}  
+            {% if forloop.first %}{% if activation.is_active %}
+            text-success">Active
+            {% else %}
+            text-danger">Inactive
+            {% endif %}
+          </h2>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Owner</th>
+                        <th>Activation Time</th>
+                        <th>Deactivation Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+            {% endif %}
+             <tr>
+                <td>{{ activation.owner }}</td>
+                <td>{{ activation.activation_time }}</td>
+                <td>{{ activation.deactivation_time }}</td>
+              </tr>
+          {% if forloop.last %}
+             </tbody>
+            </table>
+          {% endif %}
+        {% empty %}
+            text-danger">Inactive</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Owner</th>
+                        <th>Activation Time</th>
+                        <th>Deactivation Time</th>
+                    </tr>
+                </thead>
+                </table>
+          {% endfor %}
+
+         </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block form1 %}
+<div class="jumbotron">
+    <div class="container">
+    {% include 'dashboard/activation_create.html' %}
+    </div>
+</div>
+{% endblock %}

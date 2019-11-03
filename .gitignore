@@ -1,0 +1,13 @@
+#### Cottagesite
+# db
+cottagesite/db.sqlite3
+cottagesite/dashboard/migrations*
+
+#### Local Server
+
+#### Outlet Control
+
+
+# Pycache
+#
+**/__pycache__/*
