@@ -6,8 +6,7 @@ from . import views
 app_name = 'dashboard'
 urlpatterns = [
         path('', views.IndexView.as_view(), name='index'),
-        path('form/', views.activation_create_view, name='activation'),
-        path('form1/', views.ActivationCreateView.as_view(), name='activation_form'),
+        path('form/', views.activation_create_view, name='activation_form'),
 #        path('outlet/<int:outlet_number>/', views.outlet, name='outlet'),
 
         path('accounts/', include('django.contrib.auth.urls')),

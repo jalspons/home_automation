@@ -17,6 +17,9 @@ from .forms import ActivationForm
 from .models import Activation, Outlet
 from websocketControl.models import Client
 
+## DEBUGGING
+import datetime
+
 @login_required
 def activation_create_view(request):
     initial_data = {
@@ -31,8 +34,10 @@ def activation_create_view(request):
             'type': 'chat.message',
             'request_type': 'ACTIVATION',
             'outlet': [str(outlet.outlet_number) for outlet in data['outlet']],
-            #'activation_time': data['activation_time'],
-            #'deactivation_time': data['deactivation_time']
+            'task': {'activation_time': datetime.datetime.now().timestamp() +5,
+                    'deactivation_time': datetime.datetime.now().timestamp() + 7}
+            #'task': {'activation_time': data['activation_time'],
+            #        'deactivation_time': data['deactivation_time']}
         }
 
         async_to_sync(channel_layer.group_send)('CONTROLGROUP', response)

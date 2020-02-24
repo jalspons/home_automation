@@ -1,24 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!--
-<div class="container">
-    <div class="row">
-        <div id="activation-create-form">
-            <form action="" method="post" id="activation-form" accept-charset="utf-8">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input id='activation_create_submit' type='submit' value='Save'>
-                <p id="activation_create_finished"></p>
-            </form>
-        </div>
-    </div>
-</div>
--->
 
 <div class="container">
     <div class="row">
-        <div id="activation-create-form">
+        <div action="" id="activation-create-form" accept-charset="utf-8">
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}

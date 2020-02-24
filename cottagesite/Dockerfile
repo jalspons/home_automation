@@ -1,7 +1,5 @@
 # Set default image
-FROM python:3.8-alpine
-
-ENV DEBUG_VALUE "False"
+FROM python:alpine
 
 # Add project files to the /usr/src/app
 ADD . /usr/src/app
@@ -13,7 +11,13 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 
 # Install build deps
+RUN apk update
 RUN apk add gcc musl-dev libffi-dev openssl-dev
 
 # Install project dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -U pip
+RUN pip install --no-cache-dir -Ur requirements.txt
+
+# Collect static media
+RUN ls -laR
+RUN python manage.py collectstatic --noinput
