@@ -19,5 +19,4 @@ RUN pip install -U pip
 RUN pip install --no-cache-dir -Ur requirements.txt
 
 # Collect static media
-RUN ls -laR
 RUN python manage.py collectstatic --noinput
