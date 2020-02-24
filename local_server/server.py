@@ -21,7 +21,7 @@ async def open_ws_connection():
     async with websockets.connect(uri) as websocket:
         ws_sock = websocket
         async for message in websocket:
-            #await send_local_message(message)
+            await send_local_message(message)
             await print_msg(message)
 
 async def print_msg(message):
@@ -48,11 +48,7 @@ async def open_local_server():
 async def open_local_connection(reader, writer):
     global local_writer
     local_writer = writer
-    await local_receive_request(reader)
-
-
-async def local_receive_request(reader):
-    while(True):
+    while True:
         message = await reader.read(100)
         await send_ws_msg(message.decode())
         
@@ -63,21 +59,12 @@ async def send_local_message(message):
     global local_writer
     if (local_writer != None):
         local_writer.write(message.encode())
+        await local_writer.drain()
 
 def close_local_connection():
     if (local_writer != None):
         local_writer.close()
 
-
-# -------------- Helper funcs --------------------
-
-def test():
-    return input('Give cmd:')
-
-def testJson():
-    msg = json.dumps({"req": "WS", "msg" : "Jepajee"})
-    return msg
-
 # ------------- Start the server -------------------
 
-asyncio.run(open_ws_connection())
+asyncio.run(open_local_server())

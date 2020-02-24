@@ -1,32 +1,65 @@
-from threading import Event,Lock
-import RPi.GPIO as GPIO
+import asyncio
 import time
 
+from queue import PriorityQueue
+from threading import Event
+
 from button import Button
-from timer_thread import TimerThread
+from timerThread import TimerThread
 
-class Outlet(Button):
+class Outlet():
 
-    def __init__(self, pins):
-        super().__init__(pins)
+    def __init__(self, outlet_id, pins):
+        self.id = outlet_id
+        self.buttons = Button(pins)
         self.event = Event()
-        self.pins = pins
-        self.lock = Lock()
-        self.worker = None
+        self.worker = TimerThread(self, self.buttons)
+        self.worker.start()
+        self.requests = PriorityQueue()
+        self.count = 0
    
-    def is_active(self):
-        return self.worker is not None
-    '''
-    Spawns a worker thread
-    '''
-    def activate(self, interval):
-        if not self.is_active():
-            self.worker = TimerThread(self, interval * 60)
-            self.worker.start()
+    def new_request(self, task):
+        start_time = task['activation_time']
+        end_time = task['deactivation_time']
+        print(f'Start: {start_time}, End: {end_time}')
+
+        try:
+            self.requests.put((start_time, end_time))
+        except:
+            return False
+
+        return True
 
     def deactivate(self):
-        if self.is_active():
-            self.event.set()
+        self.worker.active = False
+        self.worker.event.set()
 
-    def adjust_time(self, interval):
-        pass
+
+    def ping_worker(self):
+        # Ensure that own event is clear
+        self.event.clear()
+
+        # Set worker ping flag and event
+        self.worker.ping = True
+        self.worker.event.set()
+        
+        # Wait for 5 seconds to event turn
+        tries = 3
+        while not self.event.is_set() or tries > 0:
+            self.event.wait(5)
+            tries -= 1
+        
+        # If the trial count was exceeded and still not reply, 
+        # deactive outlet if active and return False
+        if tries < 1 and not self.event.is_set():
+            if self.buttons.state:
+                self.buttons.press_button('off')
+
+            return False
+        
+        # Succesful pinging
+        self.event.clear()
+        return True
+
+    def is_active(self):
+        return self.worker.active

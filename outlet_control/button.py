@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 
 class Button():
@@ -8,8 +8,10 @@ class Button():
     '''
     def __init__(self, buttons):
         self.buttons = buttons
-        self.setup_buttons()
+        #self.setup_buttons()
+        self.state = False
 
+    '''
     def setup_buttons(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -17,11 +19,14 @@ class Button():
         for state in self.buttons:
             print('Setting for pin', self.buttons[state])# Not perhaps thread-safe and modify to use logging instead
             GPIO.setup(self.buttons[state], GPIO.OUT)
+    '''
 
     def press_button(self, button):
+        print(f'Pressed button {button}')
+
+        '''
         GPIO.output(self.buttons[button], GPIO.HIGH)
         time.sleep(0.05)
         GPIO.output(self.buttons[button], GPIO.LOW)
         time.sleep(0.2) 
-
-
+        '''

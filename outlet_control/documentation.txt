@@ -1,5 +1,0 @@
-TODO:
-
-1. Implement event loop that is running always
-2. Use and listen to named pipe to receive commands from websocket server
-3. Allow timer interruptions so that the outlets can be powered down after a certain time.

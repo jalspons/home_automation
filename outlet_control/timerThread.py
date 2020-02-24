@@ -20,6 +20,7 @@ class TimerThread(Thread):
         while True:
             if self.task is not None:
                 print(f'hello {self.outlet.id} {self.task[0] - time.time()}')            
+            
             # Wait until it is time to activate the outlet, or reset the task
             # variable to obtain new tasks.
             if self.task is not None:
@@ -80,6 +81,3 @@ class TimerThread(Thread):
     def reply_ping(self):
         self.ping = False
         self.outlet.event.set()
-        
-
-        
