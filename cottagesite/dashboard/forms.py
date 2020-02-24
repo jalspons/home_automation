@@ -10,26 +10,14 @@ class ActivationForm(forms.ModelForm):
             widget=forms.CheckboxSelectMultiple(attrs={
                 'class': 'btn-group btn-group-toggle'}))
 
-    activation_time = forms.DateTimeField(widget=AdminSplitDateTime())
-    deactivation_time = forms.DateTimeField(widget=AdminSplitDateTime())
+    #activation_time = forms.DateTimeField(required=False, widget=AdminSplitDateTime())
+    #deactivation_time = forms.DateTimeField(required=False, widget=AdminSplitDateTime())
 
     class Meta:
         model = Activation
         fields = [
-                'owner',
-                'outlet',
-                'activation_time',
-                'deactivation_time'
+                #'owner',
+                'outlet'
+                #'activation_time',
+                #'deactivation_time'
         ]
-
-    def clean_owner(self):
-        pass
-
-    def clean_outlet(self):
-        pass
-
-    def clean_activation_time(self):
-        pass
-
-    def clean_deactivation_time(self):
-        pass

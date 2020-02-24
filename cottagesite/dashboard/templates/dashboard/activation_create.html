@@ -1,15 +1,32 @@
-{% extends 'dashboard/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
+<!--
 <div class="container">
     <div class="row">
         <div id="activation-create-form">
             <form action="" method="post" id="activation-form" accept-charset="utf-8">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input type='submit' value='Save'>
+                <input id='activation_create_submit' type='submit' value='Save'>
+                <p id="activation_create_finished"></p>
             </form>
         </div>
     </div>
 </div>
+-->
+
+<div class="container">
+    <div class="row">
+        <div id="activation-create-form">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input id="activation-create-submit" type="submit" value="Save">
+                <p id="activation-create-finished"></p>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

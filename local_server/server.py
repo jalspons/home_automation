@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ws_sock = None
 local_writer = None
-uri = "ws://127.0.0.1:8080"
+uri = "ws://127.0.0.1:8000/ws/control/"
 sockpath = "socket"
 
 #------------------ Websockets ------------------
@@ -20,12 +20,12 @@ async def open_ws_connection():
     global ws_sock
     async with websockets.connect(uri) as websocket:
         ws_sock = websocket
-        await receive_ws_request()
+        async for message in websocket:
+            #await send_local_message(message)
+            await print_msg(message)
 
-async def receive_ws_request():
-    async for message in ws_sock:
-        await send_local_message(message)
-        print(message)
+async def print_msg(message):
+    print(message)
 
 async def send_ws_msg(message):
     await ws_sock.send(message)
@@ -80,4 +80,4 @@ def testJson():
 
 # ------------- Start the server -------------------
 
-asyncio.run(open_local_server())
+asyncio.run(open_ws_connection())
