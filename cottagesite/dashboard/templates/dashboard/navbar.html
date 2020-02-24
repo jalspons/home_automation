@@ -8,6 +8,7 @@
       <li class="nav-item">
           <a class="nav-link" href="{% url 'dashboard:activation_form' %}">Activate Outlet</a>
       </li>
+      {% comment %}
       <li class="nav-item">
           <a class="nav-link" href="{% url 'dashboard:logout' %}?next=/">Logout</a>
       </li>
@@ -15,6 +16,7 @@
       <li class="nav-item">
           <a class="nav-link" href="{% url 'dashboard:login' %}">Login</a>
       </li>
+      {% endcomment %}
       {% endif %}
     </ul>
 </nav>

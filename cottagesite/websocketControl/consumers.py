@@ -23,7 +23,4 @@ class ControlConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         print(f'######## MESSAGE {event}')
         #await self.send(text_data='Hello, World!')
-        await self.send(text_data=json.dumps({
-            'request_type': event['request_type'],
-            'outlet_id': event['outlet'],
-            'task': event['task']}))
+        await self.send(text_data=json.dumps(event['request']))

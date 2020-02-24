@@ -1,23 +1,39 @@
 from django import forms
-from django.contrib.admin.widgets import AdminSplitDateTime
+from django.contrib.auth.models import User
+from tempus_dominus.widgets import DateTimePicker
 
 from .models import Activation, Outlet
 
+
 class ActivationForm(forms.ModelForm):
-    owner = forms.CharField(max_length=50, widget=forms.HiddenInput())
     outlet = forms.ModelMultipleChoiceField(required=True,
             queryset=Outlet.objects.all(),
-            widget=forms.CheckboxSelectMultiple(attrs={
-                'class': 'btn-group btn-group-toggle'}))
-
-    #activation_time = forms.DateTimeField(required=False, widget=AdminSplitDateTime())
-    #deactivation_time = forms.DateTimeField(required=False, widget=AdminSplitDateTime())
+            widget=forms.CheckboxSelectMultiple())
+    activation_time = forms.DateTimeField(
+        widget=DateTimePicker(
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            }
+        ),
+    )
+    deactivation_time = activation_time = forms.DateTimeField(
+        widget=DateTimePicker(
+            options={
+                'useCurrent': True,
+                'collapse': False,
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            }
+        ),
+    )
 
     class Meta:
         model = Activation
-        fields = [
-                #'owner',
-                'outlet'
-                #'activation_time',
-                #'deactivation_time'
-        ]
+        exclude = ['owner']

@@ -8,6 +8,22 @@ Home automation system
 * No Internet connection
 * Idea is to develop a cost-effective method for controlling the heating system
 
+#### 1.1 Messaging
+
+Messages ():
+{   
+    'recipier': _                       # String    *required
+    'request_type': _,                  # String    *required
+    'outlet_data': {                    # 
+        '_': {                          # Char (outlet_id)
+            'activation_time': _,       # Timestamp (seconds)
+            'deactivation_time': _,     # Timestamp (seconds)
+            'status': _,                # Boolean (Active)
+        },
+        '_': { ... },
+        ...
+    }
+}
 
 ## 2. Concept
 

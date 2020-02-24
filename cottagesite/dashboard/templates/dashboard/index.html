@@ -41,6 +41,7 @@
                 <tr>
                     <td>{{ activation.owner }}</td>
                     <td>
+                        {{ activation.outlet }}
                         {% for outlet in activation.outlet.all %}
                         {{ outlet.id }} {% if not forloop.last %}, {% endif %}
                         {% endfor %}
@@ -51,7 +52,7 @@
                 {% endfor %}
             </tbody>
           </table>
-
+        {{ activations }}
       </div>
     </div>
 </div>

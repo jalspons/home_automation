@@ -1,5 +1,6 @@
 from asgiref.sync import async_to_sync
 
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
@@ -22,25 +23,36 @@ import datetime
 
 @login_required
 def activation_create_view(request):
-    initial_data = {
-        'owner': request.user.username
-    }
-    form = ActivationForm(request.POST or None, initial=initial_data) 
+    form = ActivationForm(request.POST or None) 
     if form.is_valid():
+        activation = form.save(commit=False)
+        activation.owner = request.user
+        activation.save()
+
         data = form.cleaned_data
         channel_layer = get_channel_layer()
-
-        response = {
-            'type': 'chat.message',
-            'request_type': 'ACTIVATION',
-            'outlet': [str(outlet.outlet_number) for outlet in data['outlet']],
-            'task': {'activation_time': datetime.datetime.now().timestamp() +5,
-                    'deactivation_time': datetime.datetime.now().timestamp() + 7}
-            #'task': {'activation_time': data['activation_time'],
-            #        'deactivation_time': data['deactivation_time']}
+        
+        outlet_data = {}
+        for outlet in data['outlet']:
+            outlet_data[str(outlet.outlet_number)] = {
+                'activation_time': data['activation_time'].timestamp(),
+                'deactivation_time': data['deactivation_time'].timestamp()
+            #    'activation_time': data['activation_time'],
+            #    'deactivation_time': data['deactivation_time']
+            }
+        
+        message = {
+            'type': 'chat.message',         # For django_redis
+            'request': {
+                'recipient': 'outlet_control',
+                'sender': 'web-server',
+                'request_type': 'ACTIVATION',
+                'outlet_data': outlet_data
+            }
         }
 
-        async_to_sync(channel_layer.group_send)('CONTROLGROUP', response)
+        print(message)
+        async_to_sync(channel_layer.group_send)('CONTROLGROUP', message)
 
     context = { 'form': form }
     
@@ -50,13 +62,12 @@ def activation_create_view(request):
 @login_required
 def index(request):
     outlets = Outlet.objects.all()
-    activations  = Activation.objects.all()
-    active_or_upcoming_activations = [ activation.is_active() for activation in activations ]
-    print(active_or_upcoming_activations)
+    activations  = Activation.objects.filter(
+        deactivation_time__gt=datetime.datetime.now()). \
+            order_by('activation_time').order_by('deactivation_time')
 
     return render(request, 'dashboard/index.html', 
-            {'outlets' : outlets, 
-                'activations' : active_or_upcoming_activations})
+            {'outlets' : outlets, 'activations' : activations})
 
 class IndexView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/index.html'
