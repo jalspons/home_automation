@@ -3,16 +3,81 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
-        <div action="" id="activation-create-form" accept-charset="utf-8">
-            <form method="POST">
+    <div class="row justify-content-md-center">
+        <div class="form-group" id="activation-create-form">
+            <form action="" method="POST" accept_charset="utf-8">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ form.non_field_errors }}
+                
+                <p><div class="bg-secondary text-white h4">Outlets:</div>
+                <div class="input-group" id="outlets">
+                    
+                    {% for outlet in form.outlet %}
+                        {{ form.outlet.errors }}
+                        <div class="form-check form-check-inline">
+                        {{ outlet }}
+                        </div>
+                    {% endfor%}
+                </div></p>
+                <p><div class="bg-secondary text-white h4">Activation Time:</div>
+                <div class="input-group date" id="activation_time_picker" data-target-input="nearest">
+                    {{ form.activation_time.errors }}
+                    {{ form.activation_time }}
+                    <div class="input-group-append" data-target="#activation_time_picker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div></p>
+                <p><div class="bg-secondary text-white h4">Deactivation Time:</div>
+                <div class="input-group date" id="deactivation_time_picker" data-target-input="nearest">
+                    {{ form.deactivation_time.errors }}
+                    {{ form.deactivation_time }}
+                    <div class="input-group-append" data-target="#deactivation_time_picker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div></p>
                 <input id="activation-create-submit" type="submit" value="Save">
                 <p id="activation-create-finished"></p>
             </form>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $('#id_activation_time').attr({
+            "class": "form-control datetimepicker-input",
+            "data-target": "#activation_time_picker"
+        });
+        $('#id_deactivation_time').attr({
+            "class": "form-control datetimepicker-input",
+            "data-target": "#deactivation_time_picker"
+        });
+    });
+
+    $(function () {
+        $('#activation_time_picker').datetimepicker({
+            format: "YYYY-MM-DD HH:mm"
+        });
+
+        $('#deactivation_time_picker').datetimepicker({
+            format: "YYYY-MM-DD HH:mm"
+        });
+
+        $('#activation_time_picker').on("change.datetimepicker", function (e) {
+            $('#deactivation_time_picker').datetimepicker('minDate', e.date);
+        });
+        
+        $('#deactivation_time_picker').on("change.datetimepicker", function (e) {
+            $('#activation_time_picker').datetimepicker('maxDate', e.date);
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#outlets').find('option').unwrap();
+    });
+</script>
 
 {% endblock %}

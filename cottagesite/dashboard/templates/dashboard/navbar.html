@@ -1,23 +1,22 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <span class="navbar-brand mb-1">Cottagesite</span>
-    <ul class="nav navbar-nav mr-auto">
-      {% if user.is_authenticated %}
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard:index' %}">Home</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard:activation_form' %}">Activate Outlet</a>
-      </li>
-      {% comment %}
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard:logout' %}?next=/">Logout</a>
-      </li>
-      {% else %}
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard:login' %}">Login</a>
-      </li>
-      {% endcomment %}
-      {% endif %}
-    </ul>
-</nav>
+
+<ul class="nav justify-content-center">
+    {% if user.is_authenticated %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:index' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:activation_form' %}">Activate Outlet</a>
+    </li>
+    {% comment %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:logout' %}?next=/">Logout</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'dashboard:login' %}">Login</a>
+    </li>
+    {% endcomment %}
+    {% endif %}
+</ul>
+
 

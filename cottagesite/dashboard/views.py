@@ -13,13 +13,11 @@ from django.utils import timezone
 
 from channels.layers import get_channel_layer
 import json
+import datetime
 
 from .forms import ActivationForm
 from .models import Activation, Outlet
 from websocketControl.models import Client
-
-## DEBUGGING
-import datetime
 
 @login_required
 def activation_create_view(request):
@@ -28,17 +26,16 @@ def activation_create_view(request):
         activation = form.save(commit=False)
         activation.owner = request.user
         activation.save()
-
+             
         data = form.cleaned_data
         channel_layer = get_channel_layer()
         
         outlet_data = {}
         for outlet in data['outlet']:
-            outlet_data[str(outlet.outlet_number)] = {
+            activation.outlet.add(outlet)
+            outlet_data[str(outlet)] = {
                 'activation_time': data['activation_time'].timestamp(),
                 'deactivation_time': data['deactivation_time'].timestamp()
-            #    'activation_time': data['activation_time'],
-            #    'deactivation_time': data['deactivation_time']
             }
         
         message = {
@@ -51,7 +48,6 @@ def activation_create_view(request):
             }
         }
 
-        print(message)
         async_to_sync(channel_layer.group_send)('CONTROLGROUP', message)
 
     context = { 'form': form }
@@ -64,23 +60,7 @@ def index(request):
     outlets = Outlet.objects.all()
     activations  = Activation.objects.filter(
         deactivation_time__gt=datetime.datetime.now()). \
-            order_by('activation_time').order_by('deactivation_time')
+            order_by('deactivation_time').order_by('activation_time')[:10]
 
     return render(request, 'dashboard/index.html', 
             {'outlets' : outlets, 'activations' : activations})
-
-class IndexView(LoginRequiredMixin, ListView):
-    template_name = 'dashboard/index.html'
-    model = Activation 
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-           
-        context['outlets'] = Outlet.objects.all()
-        context['activations'] = Activation.objects.all()
-        return context
-
-class ActivationCreateView(LoginRequiredMixin, FormView):
-    template_name = 'dashboard/activation_create.html'
-    form_class = ActivationForm
-    success_url = '/'
